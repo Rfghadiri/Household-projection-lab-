@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Household projection lab</title>
+<link href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,500;7..72,600&family=Hanken+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#e9eef0;--sf:#f8fafb;--ink:#14232b;--mu:#5b6e77;--ln:#cdd8dd;--c1:#1f5fbf;--c2:#0e8a76;--c3:#c07a10;--c4:#8a4bb5;--c5:#cc3b5b;--c6:#4a7f2a;--cc:var(--c1);box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1a20;--sf:#16242c;--ink:#e6eef1;--mu:#93a7b0;--ln:#2a3d47;--c1:#6ea2ff;--c2:#3fcdb4;--c3:#e8a93c;--c4:#bb8be6;--c5:#f27a95;--c6:#8fd16a;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0f1a20;--sf:#16242c;--ink:#e6eef1;--mu:#93a7b0;--ln:#2a3d47;--c1:#6ea2ff;--c2:#3fcdb4;--c3:#e8a93c;--c4:#bb8be6;--c5:#f27a95;--c6:#8fd16a;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 "Hanken Grotesk",system-ui,-apple-system,"Segoe UI",sans-serif}
+h1,h2,h3{font-family:Literata,Georgia,"Times New Roman",serif;font-weight:600;margin:0;line-height:1.2}
+.wrap{max-width:1180px;margin:0 auto;padding:20px 16px 40px}
+header{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:18px}
+header h1{font-size:clamp(24px,4vw,34px)}
+header p{margin:6px 0 0;color:var(--mu);max-width:62ch}
+button{font:inherit;color:inherit;cursor:pointer}
+.th{border:1px solid var(--ln);background:var(--sf);border-radius:8px;padding:6px 12px}
+.app{display:grid;grid-template-columns:290px 1fr;gap:18px;align-items:start}
+@media(max-width:860px){.app{grid-template-columns:1fr}}
+aside,.card{background:var(--sf);border:1px solid var(--ln);border-radius:10px}
+aside{padding:16px;position:sticky;top:12px}
+@media(max-width:860px){aside{position:static}}
+aside h2{font-size:17px;margin-bottom:2px}
+aside .sub{color:var(--mu);font-size:13px;margin:0 0 12px}
+.ctl{margin:0 0 13px;transition:opacity .2s}
+.ctl.off{opacity:.38}
+.ctl label{display:flex;justify-content:space-between;font-weight:500;font-size:13.5px}
+.ctl output{color:var(--cc);font-weight:600}
+.ctl small{display:block;color:var(--mu);font-size:12px}
+input[type=range]{width:100%;accent-color:var(--cc);margin:4px 0 0}
+input[type=number]{width:100%;font:inherit;background:var(--bg);color:var(--ink);border:1px solid var(--ln);border-radius:6px;padding:5px 8px}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:12px;scrollbar-width:thin}
+.tab{flex:none;border:1px solid var(--ln);background:var(--sf);border-radius:999px;padding:7px 14px;font-weight:500;display:flex;gap:8px;align-items:center}
+.tab i{width:9px;height:9px;border-radius:50%;background:var(--tc)}
+.tab[aria-selected=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.tab:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--cc);outline-offset:2px}
+.hero{padding:18px 20px;border-left:5px solid var(--cc)}
+.hero h2{font-size:clamp(20px,3vw,26px)}
+.hero .tag{color:var(--cc);font-weight:600;font-size:13.5px}
+.hero p{margin:6px 0 0;max-width:70ch}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:12px 0}
+.kpi{padding:12px 14px}
+.kpi b{display:block;font:600 26px Literata,Georgia,serif;color:var(--cc)}
+.kpi span{color:var(--mu);font-size:13px}
+.chartbox{padding:14px 12px 8px;position:relative}
+.chartbox svg{width:100%;height:auto;display:block;touch-action:pan-y}
+.gl{stroke:var(--ln);stroke-width:1}.ax{fill:var(--mu);font-size:11.5px}
+.tip{position:absolute;pointer-events:none;background:var(--ink);color:var(--bg);border-radius:8px;padding:6px 10px;font-size:12.5px;display:none;white-space:nowrap;z-index:3}
+.leg{display:flex;flex-wrap:wrap;gap:6px 16px;padding:4px 8px 6px;font-size:13px;color:var(--mu)}
+.leg i{display:inline-block;width:14px;height:4px;border-radius:2px;margin-right:6px;vertical-align:middle}
+.note{color:var(--mu);font-size:13px;margin:8px 4px 0}
+.bars{padding:14px 16px;margin-top:12px}
+.bars h3{font-size:15px;margin-bottom:8px}
+.brow{display:grid;grid-template-columns:44px 1fr;gap:10px;align-items:center;margin:6px 0;font-size:13px}
+.bar{display:flex;height:22px;border-radius:5px;overflow:hidden}
+.bar span{display:block;height:100%}
+.bl{display:flex;flex-wrap:wrap;gap:4px 14px;margin-top:6px;font-size:12.5px;color:var(--mu)}
+.bl i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px}
+.info{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:12px}
+@media(max-width:640px){.info,.kpis{grid-template-columns:1fr}}
+.info .card{padding:13px 15px}
+.info h3{font-size:14.5px;margin-bottom:4px}
+.info p{margin:0;color:var(--mu)}
+.refs{margin-top:10px;padding:13px 15px}
+.refs h3{font-size:14.5px;margin-bottom:6px}
+.refs ul{margin:0;padding-left:18px;color:var(--mu);font-size:13.5px}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--ln)}
+th{font-weight:600;color:var(--mu)}
+.tw{overflow-x:auto;padding:6px 8px;margin-top:12px}
+td i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:7px}
+footer{margin-top:18px;color:var(--mu);font-size:12.5px;max-width:90ch}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+.hb{display:flex;gap:8px;flex-wrap:wrap}dialog{border:1px solid var(--ln);border-radius:12px;background:var(--sf);color:var(--ink);padding:20px;max-width:460px;width:calc(100% - 32px)}dialog::backdrop{background:rgba(10,20,26,.5)}dialog .sub{color:var(--mu);margin:2px 0 8px}dialog label.f{display:block;margin:10px 0 3px;font-weight:500}input[type=text]{width:100%;font:inherit;background:var(--bg);color:var(--ink);border:1px solid var(--ln);border-radius:6px;padding:6px 8px}.ck{display:flex;gap:8px;align-items:center;margin:6px 0}.pri{background:var(--ink);color:var(--bg);font-weight:600}.pri:disabled{opacity:.5}#cd{max-width:660px}#ct td,#ct th{padding:4px 6px}#ct input{min-width:64px}.cs{white-space:nowrap}textarea{width:100%;font:inherit;background:var(--bg);color:var(--ink);border:1px solid var(--ln);border-radius:6px;padding:8px}select{font:inherit;background:var(--bg);color:var(--ink);border:1px solid var(--ln);border-radius:6px;padding:5px 8px}.chip{border:1px solid var(--sc);color:var(--sc);border-radius:999px;padding:1px 9px;font-size:12.5px;white-space:nowrap}#nbt td,#nbt th,#nbr td,#nbr th{padding:4px 6px}#nbt input{min-width:76px}#nbt input[type=text]{min-width:150px}
+</style><script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script></head>
+<body><div class="wrap">
+<header><div><h1>Household projection lab</h1>
+<p>Five ways to project the number of households, run side by side on the same population and the same base year. Move the drivers and watch how each method responds.</p></div>
+<div class="hb"><button class="th" id="exp" type="button" hidden>Export Word report</button><button class="th" id="theme" type="button">Switch theme</button></div></header>
+<dialog id="rep"><form method="dialog"><h2>Export Word report</h2><p class="sub">Builds a .docx file from the scenario you have set now.</p>
+<label class="f" for="rt">Report title</label><input id="rt" type="text" value="Household projection scenario report">
+<label class="f" for="ra">Author (optional)</label><input id="ra" type="text">
+<div class="ck"><input type="checkbox" id="k1" checked><label for="k1">Scenario drivers</label></div>
+<div class="ck"><input type="checkbox" id="k2" checked><label for="k2">Results table and comparison chart</label></div>
+<div class="ck"><input type="checkbox" id="k3" checked><label for="k3">Description of each method</label></div>
+<div class="ck"><input type="checkbox" id="k4" checked><label for="k4">A chart for each method</label></div>
+<div class="ck"><input type="checkbox" id="k5" checked><label for="k5">Sources and caveats</label></div>
+<p id="rst" role="status" class="note"></p>
+<div class="hb"><button class="th" value="cancel">Close</button><button class="th pri" type="button" id="go">Save as Word file</button></div></form></dialog>
+<div class="app">
+<aside><h2>Census data</h2><p class="sub" id="dsrc">Not entered yet. The projection uses stylised example values.</p><button class="th" id="cen" type="button" style="margin-bottom:18px">Enter census years</button><h2>Scenario drivers</h2><p class="sub">Dimmed drivers are not used by the selected method.</p><div id="ctls"></div></aside>
+<dialog id="cd"><form method="dialog"><h2>Census data</h2><p class="sub">Enter population and households for two or more census years. The projection starts from your latest year.</p>
+<div style="overflow-x:auto"><table id="ct"><thead><tr><th>Year</th><th>Population (thousands)</th><th>Households (thousands)</th><th>Persons per household</th><th></th></tr></thead><tbody id="cb"></tbody></table></div>
+<button class="th" type="button" id="cadd" style="margin:8px 0">Add year</button>
+<label class="f" for="cend">Project until year</label><input id="cend" type="number" step="1">
+<div class="card" id="cfit" style="padding:10px 12px;margin-top:10px;font-size:13.5px"></div>
+<p id="cmsg" role="status" class="note"></p>
+<div class="hb"><button class="th" value="cancel">Close</button><button class="th" type="button" id="cclr">Clear data</button><button class="th pri" type="button" id="cgo">Apply to projection</button></div></form></dialog>
+<main><div class="tabs" id="tabs" role="tablist"></div><div id="view"></div></main>
+</div>
+<footer>Stylised teaching models, calibrated to one shared base year (your latest census year once you enter data, otherwise about 44 households per 100 people). They show how each method behaves; they are not forecasts. For real work, replace the base shares and rates with census or register data for your area.</footer>
+</div>
+<script>
+let H=30,Y0=2026,HIST=[],OBS=null;const $=id=>document.getElementById(id);
+const S0=[.16,.17,.15,.14,.13,.25],R0=[.06,.36,.50,.54,.56,.58];
+const st={g:.6,age:.5,ht:.1,lh:4,u:7,d:1.8,unc:1,pop:1000,tab:"head",seed:7};
+const ALL=["head","ext","macro","micro","prob"];
+const CT=[
+["g","Population growth",-1,2,.1,"% a year",ALL],
+["age","Population ageing",0,1,.05,"",ALL],
+["ht","Headship trend",-.5,.5,.05,"% a year",["head","prob"]],
+["lh","Leaving parental home",2,8,.5,"% a year",["ext","macro","micro"]],
+["u","Union formation",3,12,.5,"% a year",["macro","micro"]],
+["d","Union dissolution",.5,3,.1,"% a year",["ext","macro","micro"]],
+["unc","Uncertainty",0,2,.1,"× baseline",["prob"]]];
+const A={
+head:{n:"Headship rates",c:"--c1",tag:"Static method",b:"Multiplies a population projection by the share of each age group who head a household.",how:"Project the population by age, then apply age-specific headship rates, either held constant or extrapolated from past censuses.",data:"Population projection by age and sex; headship rates from two or more censuses.",pro:"Simple, transparent and the workhorse of statistical offices. Works for horizons of around 20 years.",con:"Rates are not tied to fertility, unions or mortality, and only a few household types come out.",refs:["Perreault & George (1989), Statistical Journal of the UN Economic Commission for Europe 6(4)","Mason & Racelis (1992), International Journal of Forecasting 8(4): 509–527 (verify authors)"]},
+ext:{n:"Size and age headship",c:"--c2",tag:"Headship extended with demographic drivers",b:"Splits headship by household size and lets the size mix respond to demographic events.",how:"Union dissolution, ageing and leaving-home behaviour tilt the size mix toward smaller households; households equal persons divided by mean size.",data:"Census tables by age of head and household size, plus demographic rates.",pro:"Moderate data needs, explicit links to events, and a size breakdown.",con:"Needs a model of how events shift the rates. Here that link is deliberately stylised.",refs:["Jiang & O’Neill (2004), International Statistical Review 72(1): 51–64","Jiang & O’Neill (2007), IIASA Interim Report IR-07-017"]},
+macro:{n:"Macrosimulation",c:"--c3",tag:"Multistate cohort-component model",b:"Moves groups of people between living arrangements year by year, as LIPRO and ProFamy do.",how:"Transition rates shift people between parental home, living alone, couple and other. Households are counted from the resulting states.",data:"Counts by household position, plus transition rates by age and sex.",pro:"Consistent with the population projection and explicit about events.",con:"Data-hungry. LIPRO-style models cannot isolate fertility or mortality effects, which ProFamy was built to address.",refs:["van Imhoff & Keilman (1991), LIPRO 2.0, Swets & Zeitlinger","Keilman & Brunborg (1995), Statistics Norway Reports 95/21","Zeng, Land, Wang & Gu (2006), Population Research and Policy Review 25"]},
+micro:{n:"Microsimulation",c:"--c4",tag:"Individual life courses",b:"Simulates life events for individual people and tallies the households that result.",how:"Each simulated person faces yearly chances of leaving home, partnering, separating and dying. Every run differs by chance, so the thin lines show the spread.",data:"Individual-level survey or register data and event probabilities.",pro:"Captures heterogeneity and complex household rules.",con:"Costly to build and calibrate, and random variation needs alignment to stay consistent.",refs:["Rogers et al. (2014), International Journal of Microsimulation 7(2): 119–146","Siripanicha & Rashidi (2020), arXiv:2006.09474"]},
+prob:{n:"Probabilistic forecast",c:"--c5",tag:"Prediction intervals",b:"Draws many possible futures for population and headship rates and reports the range.",how:"Each run samples growth, headship trend and ageing, plus year-to-year shocks. Percentiles across runs form the fan.",data:"A probabilistic population forecast and time series of headship shares.",pro:"Quantifies uncertainty instead of offering a handful of variants.",con:"Needs defensible uncertainty assumptions, and some household types are far more uncertain than others.",refs:["Alho & Keilman (2010), Journal of the Royal Statistical Society A 173(1): 117–143","Scherbov & Ediev, IIASA Interim Report IR-08-002","Christiansen & Keilman (2013), Demographic Research 28(43)"]},
+cmp:{n:"Compare all",c:"--ink",tag:"Same base year, five methods",b:"Central projections side by side. Differences come from what each method lets the drivers change.",refs:["Gill & Keilman (1990), classification of static and dynamic, micro and macro models","Keilman (2018/2019), review of household forecasting; Bell, Cooper & Les (1995), Household and Family Models: A Review"]}};
+function rng(a){return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function gs(r){return Math.sqrt(-2*Math.log(1-r()))*Math.cos(2*Math.PI*r())}
+const rg=n=>Array.from({length:n},(_,i)=>i);
+const P=(t,g=st.g)=>st.pop*Math.pow(1+g/100,t);
+function shares(t,age){const x=t/H*.1*age,s=S0.slice(),b=s[0]+s[1]+s[2]+s[3];for(let i=0;i<4;i++)s[i]-=x*S0[i]/b;s[4]+=x*.35;s[5]+=x*.65;return s}
+function hraw(t,g,ht,age){const s=shares(t,age);let h=0;for(let i=0;i<6;i++)h+=s[i]*Math.min(.85,R0[i]*Math.pow(1+ht/100,t));return P(t,g)*h}
+const base=()=>OBS?OBS.hh:P(0)*S0.reduce((a,s,i)=>a+s*R0[i],0);
+const cal=(v0)=>base()/v0;
+function head(){const k=cal(hraw(0,st.g,st.ht,st.age));return rg(H+1).map(t=>k*hraw(t,st.g,st.ht,st.age))}
+const SZ=[1,2,3,4.8],B0=[.22,.29,.20,.29];
+function mixAt(t){const D=6*(st.d/100-.012)+.35*st.age-4*(st.lh/100-.04),f=2.5*D*t/H;const w=B0.map((b,i)=>b*Math.exp(-f*i/3)),s=w.reduce((a,b)=>a+b);return w.map(x=>x/s)}
+const msz=m=>m.reduce((a,x,i)=>a+x*SZ[i],0);
+function ext(){const k=base()/(P(0)/msz(mixAt(0)));return rg(H+1).map(t=>k*P(t)/msz(mixAt(t)))}
+const BASE={lh:.04,u:.07,d:.012,m:.014};
+function stepF(f,p){const[Pp,Aa,C,O]=f,lv=p.lh*Pp,dis=p.d*C,wid=p.m*.65*C,dA=p.m*Aa,dC=p.m*.35*C,dO=p.m*O,b=dA+dC+dO;
+return[Pp-lv+b,Aa+.55*lv-p.u*Aa+.7*dis+wid-dA,C+.45*lv+p.u*Aa+.5*p.u*O-dis-wid-dC,O+.3*dis-.5*p.u*O-dO]}
+let F0=[.27,.18,.4,.15];for(let i=0;i<800;i++)F0=stepF(F0,BASE);
+const hp=f=>f[1]+f[2]/2+f[3]/3;
+const sp=t=>({lh:st.lh/100,u:st.u/100,d:st.d/100,m:.014+.012*st.age*t/H});
+function macro(){const k=base()/(P(0)*hp(F0));let f=F0.slice();const v=[],fs=[];for(let t=0;t<=H;t++){fs.push(f);v.push(k*P(t)*hp(f));f=stepF(f,sp(t))}return{v,fs}}
+function micro(){const R=14,N=700,k=base()/(P(0)*hp(F0)),runs=[];
+for(let r=0;r<R;r++){const rn=rng(st.seed*977+r*131+7),s=new Uint8Array(N);
+for(let i=0;i<N;i++){let x=rn(),c=0;while(c<3&&x>F0[c]){x-=F0[c];c++}s[i]=c}
+const v=[];for(let t=0;t<=H;t++){const n=[0,0,0,0];for(let i=0;i<N;i++)n[s[i]]++;v.push(k*P(t)*(n[1]+n[2]/2+n[3]/3)/N);
+const p=sp(t);for(let i=0;i<N;i++){const x=rn(),y=rn();switch(s[i]){
+case 0:if(x<p.lh)s[i]=y<.55?1:2;break;
+case 1:if(x<p.u)s[i]=2;else if(x<p.u+p.m)s[i]=0;break;
+case 2:if(x<p.d)s[i]=y<.7?1:3;else if(x<p.d+.65*p.m)s[i]=1;else if(x<p.d+p.m)s[i]=0;break;
+default:if(x<.5*p.u)s[i]=2;else if(x<.5*p.u+p.m)s[i]=0}}}
+runs.push(v)}
+return{runs,mean:rg(H+1).map(t=>runs.reduce((a,v)=>a+v[t],0)/R)}}
+function prob(){const R=300,rn=rng(st.seed*31+5),k=base()/hraw(0,st.g,st.ht,st.age),u=st.unc,runs=[];
+for(let r=0;r<R;r++){const g=st.g+gs(rn)*.35*u,ht=st.ht+gs(rn)*.15*u,ag=Math.min(1,Math.max(0,st.age+gs(rn)*.15*u));let e=0;
+runs.push(rg(H+1).map(t=>{if(t)e+=gs(rn)*.004*u;return k*hraw(t,g,ht,ag)*Math.exp(e)}))}
+const q=p=>rg(H+1).map(t=>runs.map(v=>v[t]).sort((a,b)=>a-b)[Math.floor(p*(R-1))]);
+return{lo:q(.1),q1:q(.25),md:q(.5),q3:q(.75),hi:q(.9)}}
+let D={};
+function compute(){D={head:head(),ext:ext(),macro:macro(),micro:micro(),prob:prob()}}
+const cvar=c=>`var(${c})`;
+function chart(el,series,bands,q){
+const W=760,Hh=340,m={l:52,r:14,t:14,b:30};
+const all=series.flatMap(s=>s.v).concat(bands.flatMap(b=>b.lo.concat(b.hi))).concat(HIST.map(h=>h.v));
+let lo=Math.min(...all),hi=Math.max(...all);const pd=(hi-lo)*.14||1;lo-=pd;hi+=pd;
+const t0=HIST.length?Math.min(0,HIST[0].y-Y0):0,X=i=>m.l+(i-t0)/(H-t0)*(W-m.l-m.r),Y=v=>m.t+(1-(v-lo)/(hi-lo))*(Hh-m.t-m.b);
+const pt=(a,i)=>X(i).toFixed(1)+" "+Y(a).toFixed(1);
+const L=a=>a.map((v,i)=>(i?"L":"M")+pt(v,i)).join("");
+let g="";
+for(let k=0;k<=4;k++){const v=lo+(hi-lo)*k/4,y=Y(v);g+=`<line x1="${m.l}" x2="${W-m.r}" y1="${y}" y2="${y}" class="gl"/><text x="${m.l-8}" y="${y+4}" text-anchor="end" class="ax">${Math.round(v)}</text>`}
+for(let i=Math.ceil(t0/5)*5;i<=H;i+=5)g+=`<text x="${X(i)}" y="${Hh-8}" text-anchor="middle" class="ax">${Y0+i}</text>`;
+bands.forEach(b=>{const d=L(b.hi)+b.lo.map((v,i)=>[v,i]).reverse().map(([v,i])=>"L"+pt(v,i)).join("")+"Z";g+=`<path d="${d}" fill="${cvar(b.c)}" opacity="${b.o}"/>`});
+series.forEach(s=>{g+=`<path d="${L(s.v)}" fill="none" stroke="${cvar(s.c)}" stroke-width="${s.w||2.6}" opacity="${s.o||1}" stroke-linejoin="round" stroke-dasharray="${s.dash||""}"/>`});
+HIST.forEach(h=>{g+=`<circle cx="${X(h.y-Y0)}" cy="${Y(h.v)}" r="4.5" fill="#fff" stroke="var(--ink)" stroke-width="2"/>`});g+=`<line id="cx" y1="${m.t}" y2="${Hh-m.b}" stroke="var(--mu)" stroke-dasharray="3 3" opacity="0"/><rect x="${m.l}" y="0" width="${W-m.l-m.r}" height="${Hh}" fill="transparent" id="ov"/>`;
+el.innerHTML=`<svg viewBox="0 0 ${W} ${Hh}" role="img" aria-label="Projected households in thousands, ${Y0} to ${Y0+H}">${g}</svg><div class="tip" id="tip"></div>`;
+if(q)return;const sv=el.querySelector("svg"),tip=$("tip"),cx=$("cx");
+const named=series.filter(s=>s.n&&!s.hide);
+$("ov").addEventListener("pointermove",e=>{const r=sv.getBoundingClientRect(),x=(e.clientX-r.left)/r.width*W;const i=Math.max(0,Math.min(H,Math.round(t0+(x-m.l)/(W-m.l-m.r)*(H-t0))));
+cx.setAttribute("x1",X(i));cx.setAttribute("x2",X(i));cx.setAttribute("opacity",1);
+tip.style.display="block";tip.innerHTML=`<b>${Y0+i}</b><br>`+named.map(s=>`${s.n}: ${Math.round(s.v[i])}k`).join("<br>");
+const px=X(i)/W*r.width;tip.style.left=Math.min(px+12,r.width-150)+"px";tip.style.top="16px"});
+$("ov").addEventListener("pointerleave",()=>{tip.style.display="none";cx.setAttribute("opacity",0)})}
+function bar(title,rows,labs,cols){return`<div class="card bars"><h3>${title}</h3>${rows.map(([y,v])=>`<div class="brow"><span>${y}</span><div class="bar">${v.map((x,i)=>`<span style="width:${x*100}%;background:var(${cols[i]})"></span>`).join("")}</div></div>`).join("")}<div class="bl">${labs.map((l,i)=>`<span><i style="background:var(${cols[i]})"></i>${l}</span>`).join("")}</div></div>`}
+const f0=v=>Math.round(v).toLocaleString("en-US");
+function ctls(){$("ctls").innerHTML=CT.map(([k,l,mn,mx,sg,u])=>`<div class="ctl" data-k="${k}"><label for="r${k}">${l}<output id="o${k}"></output></label><input id="r${k}" type="range" min="${mn}" max="${mx}" step="${sg}" value="${st[k]}" data-k="${k}"></div>`).join("")+`<div class="ctl"><label for="rp">Base population (thousands)</label><input id="rp" type="number" min="50" max="100000" value="${st.pop}"></div>`;
+document.querySelectorAll("input[type=range]").forEach(i=>i.oninput=()=>{st[i.dataset.k]=+i.value;go()});
+$("rp").oninput=e=>{const v=+e.target.value;if(v>=50){st.pop=v;go()}}}
+function labels(){CT.forEach(([k,l,mn,mx,sg,u])=>{$("o"+k).textContent=(k==="age"?Math.round(st[k]*100)+"%":(st[k]>0&&k==="ht"?"+":"")+st[k]+" "+u)});
+document.querySelectorAll(".ctl[data-k]").forEach(c=>{const d=CT.find(x=>x[0]===c.dataset.k);c.classList.toggle("off",st.tab!=="cmp"&&st.tab!=="hood"&&!d[6].includes(st.tab))})}
+function tabs(){$("tabs").innerHTML=[...ALL,"cmp","hood"].map(k=>`<button class="tab" role="tab" aria-selected="${st.tab===k}" data-t="${k}" style="--tc:var(${A[k].c})"><i></i>${A[k].n}</button>`).join("");
+document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{st.tab=b.dataset.t;tabs();go()})}
+function series(k){const c=A[k].c;
+if(k==="head")return{s:[{n:A[k].n,c,v:D.head}],b:[]};
+if(k==="ext")return{s:[{n:A[k].n,c,v:D.ext}],b:[]};
+if(k==="macro")return{s:[{n:A[k].n,c,v:D.macro.v}],b:[]};
+if(k==="micro")return{s:[...D.micro.runs.map(v=>({v,c,w:1,o:.35})),{n:"Mean of runs",c,v:D.micro.mean,w:3}],b:[]};
+return{s:[{n:"Median",c,v:D.prob.md}],b:[{c,lo:D.prob.lo,hi:D.prob.hi,o:.16},{c,lo:D.prob.q1,hi:D.prob.q3,o:.22}]}}
+const endV=k=>k==="micro"?D.micro.mean:k==="macro"?D.macro.v:k==="prob"?D.prob.md:D[k];
+function view(){const k=st.tab,a=A[k],v=$("view");$("view").style.setProperty("--cc",`var(${a.c})`);document.querySelector(".app").style.setProperty("--cc",`var(${a.c})`);
+let h=`<div class="card hero"><h2>${a.n}</h2><div class="tag">${a.tag}</div><p>${a.b}</p></div>`;
+if(k==="hood"){v.innerHTML=h+nbHTML();nbWire();return}
+if(k==="cmp"){const rows=ALL.map(x=>{const e=endV(x),h0=e[0],hT=e[H],pT=P(H);return`<tr><td><i style="background:var(${A[x].c})"></i>${A[x].n}</td><td>${f0(hT)}k</td><td>${(hT/h0*100-100).toFixed(1)}%</td><td>${(pT/hT).toFixed(2)}</td><td>${{head:"Low",ext:"Moderate",macro:"High",micro:"Very high",prob:"Moderate"}[x]}</td><td>${{head:"No",ext:"Partly",macro:"Yes",micro:"Yes",prob:"No"}[x]}</td></tr>`}).join("");
+h+=`<div class="card chartbox" id="ch" style="margin-top:12px"></div><div class="leg">${ALL.map(x=>`<span><i style="background:var(${A[x].c})"></i>${A[x].n}</span>`).join("")}</div>
+<div class="card tw"><table><thead><tr><th>Method</th><th>Households ${Y0+H}</th><th>Change</th><th>Persons per household</th><th>Data demand</th><th>Links to demographic events</th></tr></thead><tbody>${rows}</tbody></table></div>`}
+else{const e=endV(k),hT=e[H],h0=e[0];
+h+=`<div class="kpis"><div class="card kpi"><b>${f0(hT)}k</b><span>Households in ${Y0+H}</span></div><div class="card kpi"><b>${(hT/h0*100-100>=0?"+":"")+(hT/h0*100-100).toFixed(1)}%</b><span>Change since ${Y0}</span></div><div class="card kpi"><b>${(P(H)/hT).toFixed(2)}</b><span>Persons per household in ${Y0+H}</span></div></div>
+<div class="card chartbox" id="ch"></div><div class="leg"><span>Households, thousands</span>${HIST.length?'<span><i style="background:none;border:2px solid var(--ink);width:10px;height:10px;border-radius:50%"></i>Observed in your census data</span>':""}${k==="prob"?`<span><i style="background:var(${a.c});opacity:.3"></i>80% interval: ${f0(D.prob.lo[H])}k to ${f0(D.prob.hi[H])}k in ${Y0+H}</span>`:""}${k==="micro"?`<span>14 runs of 700 simulated people each</span>`:""}</div>`;
+if(k==="micro")h+=`<button class="th" id="rerun" type="button" style="margin:4px 0 0">Run again with new random draws</button>`;
+if(k==="ext")h+=bar("Household size mix",[[Y0,mixAt(0)],[Y0+H,mixAt(H)]],["1 person","2 people","3 people","4 or more"],["--c1","--c2","--c3","--c4"]);
+if(k==="macro")h+=bar("Where people live",[[Y0,D.macro.fs[0]],[Y0+H,D.macro.fs[H]]],["With parents","Alone","In a couple","Other"],["--c1","--c2","--c3","--c4"]);
+h+=`<div class="info"><div class="card"><h3>How it works</h3><p>${a.how}</p></div><div class="card"><h3>Data needed</h3><p>${a.data}</p></div><div class="card"><h3>Strengths</h3><p>${a.pro}</p></div><div class="card"><h3>Limits</h3><p>${a.con}</p></div></div>`}
+h+=`<div class="card refs"><h3>Sources</h3><ul>${a.refs.map(r=>`<li>${r}</li>`).join("")}</ul></div>`;
+v.innerHTML=h;
+if(k==="cmp")chart($("ch"),ALL.map(x=>({n:A[x].n,c:A[x].c,v:endV(x),w:2.4})),[]);
+else{const s=series(k);chart($("ch"),s.s,s.b)}
+const rr=$("rerun");if(rr)rr.onclick=()=>{st.seed++;compute();view()}}
+let q=0;function go(){cancelAnimationFrame(q);q=requestAnimationFrame(()=>{compute();labels();if(st.tab==="hood"&&$("nbres"))$("nbres").innerHTML=nbRes(nbCalc());else view()})}
+$("theme").onclick=()=>{const r=document.documentElement,d=r.dataset.theme?r.dataset.theme==="dark":matchMedia("(prefers-color-scheme:dark)").matches;r.dataset.theme=d?"light":"dark";go()};
+const LIGHT={"--c1":"#1f5fbf","--c2":"#0e8a76","--c3":"#c07a10","--c4":"#8a4bb5","--c5":"#cc3b5b","--ink":"#14232b","--mu":"#5b6e77","--ln":"#cdd8dd"};
+const SHN={head:"Headship",ext:"Size & age",macro:"Macro",micro:"Micro",prob:"Probabilistic"};
+const esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+const wp=(t,o={})=>`<w:p><w:pPr>${o.s?`<w:pStyle w:val="${o.s}"/>`:""}</w:pPr><w:r>${o.b||o.i?`<w:rPr>${o.b?"<w:b/>":""}${o.i?"<w:i/>":""}</w:rPr>`:""}<w:t xml:space="preserve">${esc(t)}</w:t></w:r></w:p>`;
+const wlp=(l,t)=>`<w:p><w:r><w:rPr><w:b/></w:rPr><w:t xml:space="preserve">${esc(l)} </w:t></w:r><w:r><w:t xml:space="preserve">${esc(t)}</w:t></w:r></w:p>`;
+const wtbl=rows=>`<w:tbl><w:tblPr><w:tblW w:w="5000" w:type="pct"/><w:tblBorders>${["top","left","bottom","right","insideH","insideV"].map(b=>`<w:${b} w:val="single" w:sz="4" w:space="0" w:color="BFC9CE"/>`).join("")}</w:tblBorders><w:tblCellMar><w:left w:w="100" w:type="dxa"/><w:right w:w="100" w:type="dxa"/></w:tblCellMar></w:tblPr><w:tblGrid>${rows[0].map(()=>`<w:gridCol w:w="${Math.floor(9638/rows[0].length)}"/>`).join("")}</w:tblGrid>${rows.map((r,i)=>`<w:tr>${r.map(c=>`<w:tc><w:tcPr>${i?"":'<w:shd w:val="clear" w:color="auto" w:fill="E3EAED"/>'}</w:tcPr>${wp(c,{b:!i})}</w:tc>`).join("")}</w:tr>`).join("")}</w:tbl>`+wp("");
+const wimg=(n,alt)=>{const cx=5760720,cy=Math.round(cx*340/760);return`<w:p><w:pPr><w:keepNext/></w:pPr><w:r><w:drawing><wp:inline distT="0" distB="0" distL="0" distR="0"><wp:extent cx="${cx}" cy="${cy}"/><wp:docPr id="${n}" name="Figure ${n}" descr="${esc(alt)}"/><a:graphic><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:pic><pic:nvPicPr><pic:cNvPr id="${n}" name="Figure ${n}"/><pic:cNvPicPr/></pic:nvPicPr><pic:blipFill><a:blip r:embed="rId${n+10}"/><a:stretch><a:fillRect/></a:stretch></pic:blipFill><pic:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="${cx}" cy="${cy}"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr></pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r></w:p>`};
+function svgFor(s,b,leg){const t=document.createElement("div");chart(t,s,b,1);
+const x=t.querySelector("svg").outerHTML.replace(/var\((--[\w-]+)\)/g,(m,v)=>LIGHT[v]||"#000").replace(/class="gl"/g,'stroke="#cdd8dd" stroke-width="1"').replace(/class="ax"/g,'fill="#5b6e77" font-size="11.5" font-family="Arial,sans-serif"').replace("<svg ",'<svg xmlns="http://www.w3.org/2000/svg" width="760" height="340" ');
+const g=leg?`<g font-family="Arial,sans-serif" font-size="11.5" fill="#14232b">${leg.map((k,i)=>`<rect x="${58+i*130}" y="7" width="14" height="4" rx="2" fill="${LIGHT[A[k].c]}"/><text x="${77+i*130}" y="12">${esc(SHN[k])}</text>`).join("")}</g>`:"";
+return x.replace("</svg>",g+"</svg>")}
+const pngOf=svg=>new Promise((ok,no)=>{const im=new Image();im.onload=()=>{const c=document.createElement("canvas");c.width=1520;c.height=680;const x=c.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,1520,680);x.drawImage(im,0,0,1520,680);c.toBlob(b=>b?b.arrayBuffer().then(ok):no(new Error("Chart image failed")),"image/png")};im.onerror=()=>no(new Error("Chart image failed"));im.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(svg)});
+async function buildDoc(o){
+if(typeof JSZip==="undefined")throw new Error("The Word library did not load.");
+const imgs=[],add=async(svg,alt)=>{imgs.push(await pngOf(svg));return wimg(imgs.length,alt)};
+const E=ALL.map(k=>({k,e:endV(k)})),hs=E.map(r=>r.e[H]),lo=Math.min(...hs),hi=Math.max(...hs),nm=v=>A[E[hs.indexOf(v)].k].n;
+const date=new Date().toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"});
+let b=wp(o.title||"Household projection report",{s:"Title"})+wp((o.author?"Prepared by "+o.author+" on ":"Prepared on ")+date,{s:"Caption"});
+b+=wp("Summary",{s:"Heading1"})+wp(`Starting from ${f0(st.pop)} thousand people and ${f0(base())} thousand households in ${Y0}, the five methods project between ${f0(lo)} thousand (${nm(lo)}) and ${f0(hi)} thousand (${nm(hi)}) households in ${Y0+H}. The gap between the highest and lowest projection is ${((hi/lo-1)*100).toFixed(1)}% of the lowest.`);
+if(o.sc)b+=wp("Scenario",{s:"Heading1"})+wtbl([["Driver","Value","Used by"],...CT.map(c=>[c[1],$("o"+c[0]).textContent,c[6].length===5?"All methods":c[6].map(x=>SHN[x]).join(", ")]),["Base population",f0(st.pop)+" thousand","All methods"],["Horizon",`${Y0} to ${Y0+H}`,"All methods"]]);
+if(o.sc&&OBS)b+=wp("Census data used",{s:"Heading2"})+wtbl([["Year","Population (thousands)","Households (thousands)","Persons per household"],...CEN.map(a=>[String(a.y),f0(a.p),f0(a.h),(a.p/a.h).toFixed(2)])]);if(o.res){b+=wp("Results",{s:"Heading1"})+wtbl([["Method",`Households ${Y0+H} (thousands)`,`Change since ${Y0}`,"Persons per household"],...E.map(({k,e})=>[A[k].n,f0(e[H]),((e[H]/e[0]-1)*100).toFixed(1)+"%",(P(H)/e[H]).toFixed(2)])]);
+b+=wp(`The probabilistic forecast shows its median. Its 80% interval in ${Y0+H} runs from ${f0(D.prob.lo[H])} to ${f0(D.prob.hi[H])} thousand households.`);
+b+=await add(svgFor(ALL.map(x=>({n:A[x].n,c:A[x].c,v:endV(x),w:2.4})),[],ALL),"Projected households by method")+wp(`Figure ${imgs.length}. Projected households by method (thousands), ${Y0} to ${Y0+H}.`,{s:"Caption"})}
+if(o.res){const R=nbCalc();if(R)b+=wp("Neighborhood housing assessment",{s:"Heading1"})+wp(`Headship change taken from the ${A[NBS.m].n} method (factor ${R.mult.toFixed(3)} by ${Y0+H}); target vacancy ${NBS.vac}%.`)+wtbl([["Neighborhood","Households now","Dwellings now",`Households ${Y0+H}`,"Additional dwellings"],...R.rows.map(r=>[r.n,f0(r.h),f0(r.d),f0(r.hhT),f0(r.add)]),["Total",f0(R.sum("h")),f0(R.sum("d")),f0(R.sum("hhT")),f0(R.sum("add"))]])}
+if(o.me){b+=wp("Methods compared",{s:"Heading1"});
+for(const k of ALL){const a=A[k];b+=wp(a.n,{s:"Heading2"})+wp(a.tag+". "+a.b,{i:1})+wlp("How it works.",a.how)+wlp("Data needed.",a.data)+wlp("Strengths.",a.pro)+wlp("Limits.",a.con);
+if(o.mc){const s=series(k);b+=await add(svgFor(s.s,s.b),a.n+" projection")+wp(`Figure ${imgs.length}. ${a.n}: households (thousands), ${Y0} to ${Y0+H}.`,{s:"Caption"})}}}
+if(o.so){b+=wp("Sources and caveats",{s:"Heading1"})+[...new Set([...ALL.flatMap(k=>A[k].refs),...A.cmp.refs])].map(r=>wp("• "+r)).join("")+wp(`These are stylised models calibrated to a shared base year (the latest census year entered, or about 44 households per 100 people if none). They show how each method responds to the same drivers and are not forecasts. Replace the base age shares and rates with census or register data before drawing conclusions for a real study area.`,{s:"Caption"})}
+const W='http://schemas.openxmlformats.org/',X='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>';
+const sty=(id,nm2,pp,rp,extra="")=>`<w:style w:type="paragraph" w:styleId="${id}"><w:name w:val="${nm2}"/><w:basedOn w:val="Normal"/><w:next w:val="Normal"/><w:qFormat/><w:pPr>${pp}</w:pPr><w:rPr>${rp}</w:rPr></w:style>`;
+const styles=`${X}<w:styles xmlns:w="${W}wordprocessingml/2006/main"><w:docDefaults><w:rPrDefault><w:rPr><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri" w:cs="Calibri"/><w:sz w:val="22"/></w:rPr></w:rPrDefault><w:pPrDefault><w:pPr><w:spacing w:after="120" w:line="276" w:lineRule="auto"/></w:pPr></w:pPrDefault></w:docDefaults><w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/><w:qFormat/></w:style>${sty("Title","Title",'<w:spacing w:after="80"/>','<w:rFonts w:ascii="Georgia" w:hAnsi="Georgia"/><w:b/><w:color w:val="14232B"/><w:sz w:val="48"/>')}${sty("Heading1","heading 1",'<w:keepNext/><w:spacing w:before="360" w:after="120"/><w:outlineLvl w:val="0"/>','<w:rFonts w:ascii="Georgia" w:hAnsi="Georgia"/><w:b/><w:color w:val="1F4E8C"/><w:sz w:val="32"/>')}${sty("Heading2","heading 2",'<w:keepNext/><w:spacing w:before="240" w:after="80"/><w:outlineLvl w:val="1"/>','<w:rFonts w:ascii="Georgia" w:hAnsi="Georgia"/><w:b/><w:color w:val="14232B"/><w:sz w:val="26"/>')}${sty("Caption","caption",'<w:spacing w:after="160"/>','<w:i/><w:color w:val="5B6E77"/><w:sz w:val="19"/>')}</w:styles>`;
+const doc=`${X}<w:document xmlns:w="${W}wordprocessingml/2006/main" xmlns:r="${W}officeDocument/2006/relationships" xmlns:wp="${W}drawingml/2006/wordprocessingDrawing" xmlns:a="${W}drawingml/2006/main" xmlns:pic="${W}drawingml/2006/picture"><w:body>${b}<w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1134" w:right="1134" w:bottom="1134" w:left="1134" w:header="708" w:footer="708" w:gutter="0"/></w:sectPr></w:body></w:document>`;
+const z=new JSZip();
+z.file("[Content_Types].xml",`${X}<Types xmlns="${W}package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Default Extension="png" ContentType="image/png"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/><Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/></Types>`);
+z.file("_rels/.rels",`${X}<Relationships xmlns="${W}package/2006/relationships"><Relationship Id="rId1" Type="${W}officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>`);
+z.file("word/document.xml",doc);z.file("word/styles.xml",styles);
+z.file("word/_rels/document.xml.rels",`${X}<Relationships xmlns="${W}package/2006/relationships"><Relationship Id="rId1" Type="${W}officeDocument/2006/relationships/styles" Target="styles.xml"/>${imgs.map((_,i)=>`<Relationship Id="rId${i+11}" Type="${W}officeDocument/2006/relationships/image" Target="media/image${i+1}.png"/>`).join("")}</Relationships>`);
+imgs.forEach((d,i)=>z.file(`word/media/image${i+1}.png`,d));
+return z.generateAsync({type:"blob",compression:"DEFLATE"})}
+let DL=null;
+if(typeof claude!=="undefined")claude.use("downloads").then(d=>{DL=d;$("exp").hidden=!d}).catch(()=>{});
+$("exp").onclick=()=>{$("rst").textContent="";$("rep").showModal()};
+$("go").onclick=async()=>{const m=$("rst"),btn=$("go");btn.disabled=true;m.textContent="Building the report…";
+try{const blob=await buildDoc({title:$("rt").value.trim(),author:$("ra").value.trim(),sc:$("k1").checked,res:$("k2").checked,me:$("k3").checked,mc:$("k4").checked,so:$("k5").checked});
+await DL.save({filename:`household-projection-report-${new Date().toISOString().slice(0,10)}.docx`,data:blob});m.textContent="Report saved."}
+catch(e){m.textContent=e&&e.code==="declined"?"Save cancelled. You can try again.":"Could not create the report: "+((e&&e.message)||"unknown error")}
+btn.disabled=false};
+let CEN=[];
+const rowH=(y,p,h)=>`<tr><td><input type="number" class="cy" value="${y}" aria-label="Year"></td><td><input type="number" class="cp" value="${p}" min="0" step="any" aria-label="Population in thousands"></td><td><input type="number" class="ch" value="${h}" min="0" step="any" aria-label="Households in thousands"></td><td class="cs">–</td><td><button class="th" type="button" aria-label="Remove this year">×</button></td></tr>`;
+function readRows(){return[...document.querySelectorAll("#cb tr")].map(t=>({y:Math.round(+t.querySelector(".cy").value),p:+t.querySelector(".cp").value,h:+t.querySelector(".ch").value})).filter(a=>a.y>=1000&&a.p>0&&a.h>0).sort((a,b)=>a.y-b.y)}
+function slope(x,y){const n=x.length,mx=x.reduce((a,b)=>a+b)/n,my=y.reduce((a,b)=>a+b)/n;let sxy=0,sxx=0;for(let i=0;i<n;i++){sxy+=(x[i]-mx)*(y[i]-my);sxx+=(x[i]-mx)**2}return sxy/sxx}
+const pc=s=>(Math.exp(s)-1)*100;
+function fitOf(r){const x=r.map(a=>a.y);return{g:pc(slope(x,r.map(a=>Math.log(a.p)))),gh:pc(slope(x,r.map(a=>Math.log(a.h)))),ht:pc(slope(x,r.map(a=>Math.log(a.h/a.p))))}}
+function liveFit(){document.querySelectorAll("#cb tr").forEach(t=>{const p=+t.querySelector(".cp").value,h=+t.querySelector(".ch").value;t.querySelector(".cs").textContent=p>0&&h>0?(p/h).toFixed(2):"–"});
+const r=readRows(),o=$("cfit");$("cend").placeholder=r.length?String(r[r.length-1].y+30):"";
+if(r.length<2||new Set(r.map(a=>a.y)).size<r.length){o.textContent="Enter at least two different years with population and households to see the trend.";return}
+const f=fitOf(r),s=v=>(v>=0?"+":"")+v.toFixed(2)+"% a year";
+o.innerHTML=`<b>What your data show, ${r[0].y} to ${r[r.length-1].y}</b><br>Population ${s(f.g)}<br>Households ${s(f.gh)}<br>Headship (households per person) ${s(f.ht)}<br><span style="color:var(--mu)">These set the population growth and headship trend drivers, fitted across every year you enter. The headship trend also reflects ageing, so lower the ageing driver if you do not want it counted twice.</span>`}
+function setSl(k,v){const d=CT.find(c=>c[0]===k),el=$("r"+k);el.step=".01";el.min=Math.min(d[2],Math.floor(v)-1);el.max=Math.max(d[3],Math.ceil(v)+1);el.value=v;st[k]=+el.value}
+$("cb").innerHTML=rowH(2011,"","")+rowH(2016,"","");
+$("cb").oninput=liveFit;
+$("cb").onclick=e=>{const b=e.target.closest("button");if(b){b.closest("tr").remove();liveFit()}};
+$("cadd").onclick=()=>{const ys=[...document.querySelectorAll(".cy")].map(i=>+i.value||0);$("cb").insertAdjacentHTML("beforeend",rowH(Math.max(...ys,2006)+5,"",""))};
+$("cen").onclick=()=>{$("cmsg").textContent="";$("cd").showModal();liveFit()};
+$("cgo").onclick=()=>{const r=readRows(),m=$("cmsg");
+if(r.length<2||new Set(r.map(a=>a.y)).size<r.length||r.some(a=>a.h>=a.p)){m.textContent="Enter two or more different years, each with population and households, and keep households below population.";return}
+const L=r[r.length-1],e=+$("cend").value||L.y+30,h=e-L.y;
+if(!(h>=5&&h<=50)){m.textContent=`Choose an end year between ${L.y+5} and ${L.y+50}.`;return}
+const f=fitOf(r);CEN=r;OBS={pop:L.p,hh:L.h};Y0=L.y;H=h;HIST=r.map(a=>({y:a.y,v:a.h}));
+st.pop=L.p;$("rp").value=L.p;$("rp").disabled=true;setSl("g",+f.g.toFixed(2));setSl("ht",+f.ht.toFixed(2));
+$("dsrc").textContent=`Using ${r.length} census years (${r[0].y} to ${L.y}). The projection runs ${Y0} to ${Y0+H}, with growth and headship trend fitted from your data.`;
+m.textContent="";$("cd").close();go()};
+$("cclr").onclick=()=>{OBS=null;HIST=[];CEN=[];Y0=2026;H=30;st.pop=1000;$("rp").value=1000;$("rp").disabled=false;
+[["g",.6],["ht",.1]].forEach(([k,v])=>{const d=CT.find(c=>c[0]===k),el=$("r"+k);el.step=d[4];el.min=d[2];el.max=d[3];el.value=v;st[k]=v});
+$("dsrc").textContent="Not entered yet. The projection uses stylised example values.";$("cb").innerHTML=rowH(2011,"","")+rowH(2016,"","");$("cend").value="";$("cmsg").textContent="";liveFit();go()};
+A.hood={n:"Neighborhoods",c:"--c6",tag:"Housing assessment by neighborhood (محلات)",b:"Enter population, households and dwelling units for each neighborhood. The tool compares them today, then projects households with the headship change from the method you pick and reports how many dwellings each neighborhood will need."};
+let NBD=[],NBS={m:"head",vac:5,dil:false};
+try{const j=JSON.parse(localStorage.getItem("hpl-nb")||"null");if(j&&Array.isArray(j.d)){NBD=j.d;Object.assign(NBS,j.s||{});if(!ALL.includes(NBS.m))NBS.m="head"}}catch(e){}
+const nbSave=()=>{try{localStorage.setItem("hpl-nb",JSON.stringify({d:NBD,s:NBS}))}catch(e){}};
+const dg=s=>s.replace(/[۰-۹]/g,c=>c.charCodeAt(0)-1776).replace(/[٠-٩]/g,c=>c.charCodeAt(0)-1632).replace(/٫/g,".").replace(/[٬،]/g,",");
+function nbParse(t){return dg(t).split(/\r?\n/).map(l=>{const c=l.includes("\t")?l.split("\t"):l.split(/[;,]/),n=x=>{const v=parseFloat(String(x==null?"":x).replace(/,/g,"").trim());return isFinite(v)?v:null};return{n:(c[0]||"").trim(),p:n(c[1]),h:n(c[2]),d:n(c[3]),dl:n(c[4])||0,g:n(c[5])}}).filter(r=>r.n&&r.p>0&&r.h>0&&r.d>0)}
+const EX=()=>rg(10).map(i=>{const p=4000+((i*7919)%9)*1300,h=Math.round(p/(2.9+((i*3)%5)*.2)),d=Math.round(h*(.92+((i*5)%7)*.025));return{n:"محله نمونه "+String(i+1).replace(/\d/g,x=>"۰۱۲۳۴۵۶۷۸۹"[x]),p,h,d,dl:[35,12,28,5,40,18,8,22,30,10][i],g:[.3,1.4,.6,2.2,-.2,.9,1.8,.4,.1,1.2][i]}});
+function nbCalc(){if(!NBD.length)return null;const e=endV(NBS.m),mult=(e[H]/e[0])/(P(H)/P(0));
+const rows=NBD.map(r=>{const g=r.g==null?st.g:r.g,hhT=r.h*Math.pow(1+g/100,H)*mult,rep=NBS.dil?r.d*(r.dl||0)/100:0;return{n:r.n,p:r.p,h:r.h,d:r.d,hhT,bal:r.d-r.h,vac:(r.d-r.h)/r.d*100,size:r.p/r.h,add:Math.max(0,hhT*(1+NBS.vac/100)+rep-r.d)}}).sort((a,b)=>b.add-a.add);
+return{rows,mult,sum:k=>rows.reduce((a,r)=>a+r[k],0)}}
+function nbRes(R){if(!R)return`<div class="card" style="padding:16px;margin-top:12px;color:var(--mu)">Add neighborhoods above, or load the example data, to see the assessment.</div>`;
+const Y=Y0+H,mx=Math.max(1,...R.rows.map(r=>r.add)),sg=v=>(v>0?"+":"")+f0(v),stt=r=>r.vac<0?["Shortage","--c5"]:r.vac<NBS.vac?["Tight","--c3"]:r.vac>3*NBS.vac?["High vacancy","--c1"]:["Balanced","--c2"];
+const sh=R.rows.filter(r=>r.bal<0).length;
+return`<div class="kpis"><div class="card kpi"><b>${sg(R.sum("bal"))}</b><span>Dwellings minus households today</span></div><div class="card kpi"><b>${f0(R.sum("add"))}</b><span>Additional dwellings needed by ${Y}</span></div><div class="card kpi"><b>${sh} of ${R.rows.length}</b><span>Neighborhoods with fewer dwellings than households</span></div></div>
+<div class="card tw"><table id="nbr"><thead><tr><th>Neighborhood</th><th>Persons per household</th><th>Dwellings minus households</th><th>Vacancy today</th><th>Households ${Y}</th><th>Additional dwellings by ${Y}</th><th>Status today</th></tr></thead><tbody>${R.rows.map(r=>{const s=stt(r);return`<tr><td dir="auto">${esc(r.n)}</td><td>${r.size.toFixed(2)}</td><td>${sg(r.bal)}</td><td>${r.vac.toFixed(1)}%</td><td>${f0(r.hhT)}</td><td><div style="display:flex;gap:8px;align-items:center"><b style="min-width:44px">${f0(r.add)}</b><div style="height:8px;border-radius:4px;background:var(--cc);width:${Math.max(2,r.add/mx*100).toFixed(0)}%"></div></div></td><td><span class="chip" style="--sc:var(${s[1]})">${s[0]}</span></td></tr>`}).join("")}</tbody></table></div>
+<p class="note">Headship change from the ${A[NBS.m].n} method is a factor of ${R.mult.toFixed(3)} on households per person by ${Y}. Households in ${Y} equal today’s households × the neighborhood’s own population growth × that factor. Needed dwellings add a target vacancy of ${NBS.vac}%${NBS.dil?" and replace the dilapidated share of each neighborhood’s stock":""}. Status compares today’s vacancy with the target: shortage below zero, tight below the target, high vacancy above three times the target.</p>`}
+const nbIn=()=>`<div class="tw" style="padding:0;margin:0;max-height:340px;overflow:auto"><table id="nbt"><thead><tr><th>Neighborhood</th><th>Population</th><th>Households</th><th>Dwellings</th><th>Dilapidated %</th><th>Growth %</th><th></th></tr></thead><tbody>${NBD.map((r,i)=>`<tr data-i="${i}"><td><input data-f="n" dir="auto" type="text" value="${esc(r.n).replace(/"/g,"&quot;")}"></td>`+[["p",r.p],["h",r.h],["d",r.d],["dl",r.dl],["g",r.g==null?"":r.g]].map(([f,v])=>`<td><input data-f="${f}" type="number" step="any" value="${v}"></td>`).join("")+`<td><button class="th" type="button" aria-label="Remove">×</button></td></tr>`).join("")}</tbody></table></div>`;
+function nbHTML(){return`<div class="card" style="padding:14px 16px;margin-top:12px"><h3 style="font-size:16px;margin-bottom:4px">Neighborhood data (اطلاعات محلات)</h3><p class="note" style="margin:0 0 8px">One row per neighborhood: name, population, households, dwelling units, dilapidated share (%) and annual population growth (%). The last two are optional; an empty growth cell uses the city growth driver. Persian digits are accepted.</p>
+<textarea id="nbp" rows="4" dir="auto" placeholder="Paste rows copied from Excel or a CSV file, one neighborhood per line:&#10;name, population, households, dwellings, dilapidated %, growth %"></textarea>
+<div class="hb" style="margin:8px 0"><button class="th" type="button" id="nba">Add pasted rows</button><button class="th" type="button" id="nbe">Load example data</button><button class="th" type="button" id="nbc">Clear all</button></div><p class="note" id="nbm" role="status" style="margin:0 0 8px"></p>
+${NBD.length?nbIn():""}
+<div class="hb" style="margin-top:12px;align-items:center"><label for="nbsel">Headship change from</label><select id="nbsel">${ALL.map(k=>`<option value="${k}"${NBS.m===k?" selected":""}>${A[k].n}</option>`).join("")}</select><label for="nbv">Target vacancy %</label><input id="nbv" type="number" min="0" max="30" step="0.5" value="${NBS.vac}" style="width:80px"><label><input type="checkbox" id="nbd"${NBS.dil?" checked":""}> Also replace dilapidated units</label></div></div><div id="nbres">${nbRes(nbCalc())}</div>`}
+function nbWire(){const up=()=>{nbSave();$("nbres").innerHTML=nbRes(nbCalc())};
+$("nba").onclick=()=>{const r=nbParse($("nbp").value);if(!r.length){$("nbm").textContent="No valid rows found. Each line needs a name, then population, households and dwellings as numbers.";return}NBD=NBD.concat(r);nbSave();view();$("nbm").textContent=`Added ${r.length} neighborhoods.`};
+$("nbe").onclick=()=>{NBD=EX();nbSave();view();$("nbm").textContent="Example data loaded. These numbers are made up; replace them with your own."};
+$("nbc").onclick=()=>{NBD=[];nbSave();view()};
+["nbsel","nbv","nbd"].forEach(id=>$(id).onchange=()=>{NBS.m=$("nbsel").value;NBS.vac=Math.max(0,+$("nbv").value||0);NBS.dil=$("nbd").checked;up()});
+const t=$("nbt");if(t){t.onchange=e=>{const i=+e.target.closest("tr").dataset.i,f=e.target.dataset.f,v=e.target.value;NBD[i][f]=f==="n"?v:(v===""?(f==="g"?null:0):+v);up()};
+t.onclick=e=>{const b=e.target.closest("button");if(b){NBD.splice(+b.closest("tr").dataset.i,1);nbSave();view()}}}}
+ctls();tabs();compute();labels();view();
+</script></body></html>
